@@ -41,7 +41,7 @@ public class EnemyAI : MonoBehaviour {
 		UIManager.OnPlayerDeath += OnPlayerDeath;
 	}
 
-	void FixedUpdate () {
+	void Update () {
 
 		// Continually turn to face the player
 		StartCoroutine (FacePlayer ());
