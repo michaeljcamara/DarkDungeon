@@ -16,7 +16,10 @@ Run: `Shift`
 
 # Screenshots
 
-![1](Screenshots/1.PNG)
-![2](Screenshots/2.PNG)
-![3](Screenshots/3.PNG)
-![4](Screenshots/4.PNG)
+![1](/Screenshots/1.png)
+
+![2](/Screenshots/2.png)
+
+![3](/Screenshots/3.png)
+
+![4](/Screenshots/4.png)
