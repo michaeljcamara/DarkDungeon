@@ -13,3 +13,10 @@ Jump: `Space`
 Run: `Shift`
 
 (If you are not sure what to do in the beginning, try knocking down the bottles on the table using the ball in front of you; the rest should be pretty straight-forward)
+
+# Screenshots
+
+![1](Screenshots/1.PNG)
+![2](Screenshots/2.PNG)
+![3](Screenshots/3.PNG)
+![4](Screenshots/4.PNG)
