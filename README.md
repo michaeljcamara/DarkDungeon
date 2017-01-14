@@ -12,7 +12,7 @@ Jump: `Space`
 
 Run: `Shift`
 
-(If you are not sure what to do in the beginning, try knocking down the bottles on the table using the ball in front of you; the rest should be pretty straight-forward)
+(If you are not sure what to do in the beginning, try knocking down the bottles on the table using the ball in front of you; the rest should be pretty self explanatory)
 
 # Screenshots
 
