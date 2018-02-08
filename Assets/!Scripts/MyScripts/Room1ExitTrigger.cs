@@ -7,7 +7,7 @@ public class Room1ExitTrigger : MonoBehaviour {
 	// lower the noise from the "outdoor" effects
 	void OnTriggerEnter (Collider collider) {
 		if (collider.tag == "Player") {
-			this.GetComponentInParent<Room1Listener> ().SendMessage ("Room1Exited");
+			SendMessageUpwards ("Room1Exited");
 			this.gameObject.SetActive (false);
 		}
 	}

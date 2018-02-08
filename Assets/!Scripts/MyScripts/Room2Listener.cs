@@ -11,11 +11,24 @@ public class Room2Listener : MonoBehaviour {
 		audio = GetComponent<AudioSource> ();
 	}
 
-	// Trigger when the user enters the room.  Will turn on some lights, fire
-	// particle effects, and sound effects (e.g. fire crackling);
-	private void Room2Entered () {
+    // Trigger room2 animation, which will turn on fire (particle), light, and sound effects
+    void OnTriggerEnter(Collider collider) {
+        if (collider.tag == "Player") {
+            anim.SetBool("isRoom2Entered", true);
+        }
+    }
+
+    // Trigger when the user enters the room.  Will turn on some lights, fire
+    // particle effects, and sound effects (e.g. fire crackling);
+    private void Room2Entered () {
 		anim.SetBool ("isRoom2Entered", true);
 	}
+
+    // Trigger when user exits room2 (into room 3). Ensure timer and lasers stop.
+    private void Room2Exited() {
+        // Same effect as triggering a laser, so reusing code here
+        LaserTriggered();
+    }
 
 	// Trigger when the user clicks on the lever.  Will reset any existing timer and
 	// will begin a new ticking timer with a corresponding UI element.

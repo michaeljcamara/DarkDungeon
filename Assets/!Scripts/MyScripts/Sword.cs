@@ -5,11 +5,11 @@ public class Sword : MonoBehaviour {
 
 	// How quickly the sword will swing
 	[SerializeField]
-	private float speed;
+	private float speed = 5;
 
 	// How long the swinging animation is
 	[SerializeField]
-	private float duration;
+	private float duration = 0.5f;
 
 	// Indicate if the sword if currently held
 	private bool isHeld;
@@ -17,13 +17,16 @@ public class Sword : MonoBehaviour {
 	// Indicate if the player is already swinging the sword
 	private bool isSwinging;
 
-	private AudioSource audio;
+	private AudioSource audioSource;
+    private BoxCollider col;
 
 	void Awake () {
 		isHeld = false;
 		isSwinging = false;
-		audio = this.GetComponent<AudioSource> ();
-	}
+		audioSource = GetComponent<AudioSource> ();
+        col = GetComponent<BoxCollider>();
+
+    }
 
 	void OnMouseDown () {
 
@@ -35,7 +38,7 @@ public class Sword : MonoBehaviour {
 			if (Physics.Raycast (ray, 5) == true) {
 
 				// Trigger animation for room 3
-				GetComponentInParent<Room3Listener> ().SendMessage ("SwordTaken");
+				SendMessageUpwards("SwordTaken");
 			
 				// Pick up the sword!
 				GetSword ();
@@ -84,10 +87,10 @@ public class Sword : MonoBehaviour {
 		isSwinging = true;
 
 		// Turn on collider to damage enemy
-		this.GetComponent<BoxCollider> ().enabled = true;
+		col.enabled = true;
 
 		// Play sound effect (quick whooshing sound)
-		audio.Play ();
+		audioSource.Play ();
 
 		// Swing down
 		for (float elapsed = 0; elapsed < duration; elapsed += Time.deltaTime) {
@@ -106,7 +109,7 @@ public class Sword : MonoBehaviour {
 		}
 
 		// Turn off collider to prevent untriggered damange to enemy
-		this.GetComponent<BoxCollider> ().enabled = false;
+		col.enabled = false;
 
 		// Reset isSwinging to resting state
 		isSwinging = false;

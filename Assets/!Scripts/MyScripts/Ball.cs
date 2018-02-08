@@ -9,6 +9,7 @@ public class Ball : MonoBehaviour {
 	// Indicate whether ball is held by player or not
 	private bool isHeld;
 
+    private AudioSource audioSource;
 	private Rigidbody body;
 	private SphereCollider sphereCollider;
 
@@ -17,6 +18,7 @@ public class Ball : MonoBehaviour {
 		isHeld = false;
 		body = this.GetComponent<Rigidbody> ();
 		sphereCollider = this.GetComponent<SphereCollider> ();
+        audioSource = this.GetComponent<AudioSource>();
 
 		// Ensure that ball can be triggered with mouse when collider deactivated
 		Physics.queriesHitTriggers = true;
@@ -61,7 +63,7 @@ public class Ball : MonoBehaviour {
 
 			// Throw the ball!
 			body.AddForce (target, ForceMode.Acceleration);
-			this.GetComponent<AudioSource> ().Play ();
+            audioSource.Play ();
 			isHeld = false;
 			 
 			// Create a new ball on the crates in front of table

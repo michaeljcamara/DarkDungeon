@@ -18,7 +18,13 @@ public class EnemyAI : MonoBehaviour {
 	[SerializeField]
 	private int health = 5;
 
-	void Start () {
+    // How quickly the enemy turns to face the player
+    public float turnSpeed = 1;
+
+    // How quickly the enemy moves toward player
+    public float moveSpeed = 1;
+
+    void Start () {
 
 		isInvulnerable = false;
 
@@ -41,30 +47,29 @@ public class EnemyAI : MonoBehaviour {
 		UIManager.OnPlayerDeath += OnPlayerDeath;
 	}
 
-	void FixedUpdate () {
+	void Update () {
 
-		// Continually turn to face the player
-		StartCoroutine (FacePlayer ());
-
-		// Check how far away the player is from the enemy
-		float distanceToPlayer = Vector3.Magnitude (trans.position - player.transform.position);
+        RotateToPlayer();
 
 		// Only excecute action if currently in the waiting animation
 		if (anim.IsPlaying ("wait")) {
-		
-			// If Player is too close, move away
-			if (distanceToPlayer < 3.5f) {
-				StartCoroutine (MoveBack ());
+
+            // Check how far away the player is from the enemy
+            float distanceToPlayer = Vector3.Magnitude(trans.position - player.transform.position);
+
+            // If Player is too close, move away
+            if (distanceToPlayer < 4.5f) {
+                MoveBackward();
 			}
 
 			// If player is within range, Attack!
-			else if (distanceToPlayer < 6.6f) {
+			else if (distanceToPlayer < 6.5f) {
 				Swing ();
 			} 
 
 			// If player is too far away, move closer
 			else {
-				StartCoroutine (MoveForward ());
+                MoveForward();
 			}
 		}
 	}
@@ -100,7 +105,6 @@ public class EnemyAI : MonoBehaviour {
 	void HitPlayer () {
 		player.SendMessage ("HitPlayer");
 		DisableWeapons ();
-		StartCoroutine (MoveBack ());
 	}
 
 	// This triggers when the player swings a sword at the enemy.
@@ -122,69 +126,38 @@ public class EnemyAI : MonoBehaviour {
 		isInvulnerable = false;
 	}
 
-	// Continually rotate in the direction of the player
-	IEnumerator FacePlayer () {
-		Quaternion targetRot;
-		while (true) {
-			// Determine angle needed to face the player
-			targetRot = Quaternion.LookRotation (player.transform.position - trans.position, Vector3.up);
-			targetRot.x = 0f;
-			targetRot.z = 0f;
+    // Continually rotate in the direction of the player
+    void RotateToPlayer() {
+        Vector3 targetDir = player.transform.position - transform.position;
+        Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, Time.deltaTime * turnSpeed, 0.0f);
+        newDir.y = 0;
+        transform.rotation = Quaternion.LookRotation(newDir);
+    }
 
-			// Rotate to face player
-			trans.rotation = Quaternion.RotateTowards (trans.rotation, targetRot, 0.17f * Time.deltaTime);
-			yield return new WaitForEndOfFrame ();		
-		}
-	}
+    // Move forward a short distance, provided that there is sufficient distance in front of it
+    void MoveForward() {
 
-	// Move back a short distance, provided that there is sufficient distance behiind it
-	IEnumerator MoveBack () {
+        anim.CrossFade("move_forward", 0.3f);
 
-		// Determine if enemy should move back or not (true if no object is behind enemy)
-		Vector3 adjustedEnemyPos = new Vector3 (trans.position.x, trans.position.y + 2.5f, trans.position.z);
+        Vector3 adjustedEnemyPos = new Vector3(trans.position.x, trans.position.y + 2.5f, trans.position.z);
+        if (!Physics.Raycast(adjustedEnemyPos, trans.forward, Time.deltaTime * moveSpeed)) {
+            transform.Translate(0, 0, Time.deltaTime * moveSpeed);
+        }
+    }
 
-		if (!Physics.Raycast (adjustedEnemyPos, trans.forward * -1, 8)) {
+    // Move backward a short distance, provided that there is sufficient distance in back of it
+    void MoveBackward() {
 
-			// Move for the duration of the indicated clip
-			float duration = anim.GetClip ("move_back").length;
+        anim.CrossFade("move_back", 0.3f);
 
-			anim.CrossFade ("move_back", 0.3f);
+        Vector3 adjustedEnemyPos = new Vector3(trans.position.x, trans.position.y + 2.5f, trans.position.z);
+        if (!Physics.Raycast(adjustedEnemyPos, trans.forward * -1, Time.deltaTime * moveSpeed)) {
+            transform.Translate(0, 0, -1 * Time.deltaTime * moveSpeed);
+        }
+    }
 
-			// Rotate to face player and move back (if enough space behind enemy)
-			for (float elapsed = 0; elapsed < duration; elapsed += Time.deltaTime) {
-				if (!Physics.Raycast (adjustedEnemyPos, trans.forward * -1, 5)) {
-					trans.Translate (0, 0, -3f * Time.deltaTime);
-				}
-				yield return new WaitForEndOfFrame ();
-			}
-		}
-	}
-
-	// Move forward a short distance, provided that there is sufficient distance in front of it
-	IEnumerator MoveForward () {
-
-		// Determine if enemy should move back or not (true if no object is behind enemy)
-		Vector3 adjustedEnemyPos = new Vector3 (trans.position.x, trans.position.y + 2.5f, trans.position.z);
-		if (!Physics.Raycast (adjustedEnemyPos, trans.forward, 5)) {
-
-			// Move for the duration of the indicated clip
-			float duration = anim.GetClip ("move_forward").length;
-
-			anim.CrossFade ("move_forward", 0.3f);
-
-			// Rotate to face player and move forward (if enough space)
-			for (float elapsed = 0; elapsed < duration; elapsed += Time.deltaTime) {
-
-				if (!Physics.Raycast (adjustedEnemyPos, trans.forward, 5)) {
-					trans.Translate (0, 0, 4 * Time.deltaTime);
-				}
-				yield return new WaitForEndOfFrame ();
-			}
-		}
-	}
-		
-	// If all health missing, kill this enemy; otherwise just wait
-	void LateUpdate () {
+    // If all health missing, kill this enemy; otherwise just wait
+    void LateUpdate () {
 		if (health <= 0) {
 			OnDeath ();
 		} else {

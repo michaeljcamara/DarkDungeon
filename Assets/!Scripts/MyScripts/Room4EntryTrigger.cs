@@ -7,7 +7,7 @@ public class Room4EntryTrigger : MonoBehaviour {
 	// the enemy to spawn
 	void OnTriggerEnter (Collider collider) {
 		if (collider.tag == "Player") {
-			this.GetComponentInParent<Room4Listener> ().SendMessage ("Room4Entered");
+			SendMessageUpwards ("Room4Entered");
 		}
 	}
 }

@@ -34,6 +34,8 @@ public class Laser : MonoBehaviour {
 	[SerializeField]
 	private float distance;
 
+    private AudioSource audioSource;
+
 	// Store the desired movement method at startup to allow quicker subsequent updates
 	void Start () {
 
@@ -53,6 +55,7 @@ public class Laser : MonoBehaviour {
 		}
 
 		startPos = this.transform.position;
+        audioSource = GetComponent<AudioSource>();
 	}
 
 	// Use the movement method determined at startup
@@ -90,7 +93,7 @@ public class Laser : MonoBehaviour {
 		if (collider.gameObject.tag == "Player") {
 			this.SendMessageUpwards ("LaserTriggered");
 		}
-		this.GetComponent<AudioSource> ().Play ();
+		audioSource.Play ();
 	}
 
 	// Dummy method to prevent null pointer from delegate
